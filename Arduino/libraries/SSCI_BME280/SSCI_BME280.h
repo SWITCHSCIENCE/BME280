@@ -13,7 +13,7 @@
 #endif
 
 // I2C Address
-#define   BME280_ADDRESS  0x76
+//#define   BME280_ADDRESS  0x76
 
 // BME280 Registers
 #define   BME280_REG_calib00    0x88
@@ -61,6 +61,7 @@ class SSCI_BME280 {
   public:
     SSCI_BME280();
     void setMode(
+      uint8_t i2c_addr,         //I2C Address
       uint8_t osrs_t,           //Temperature oversampling
       uint8_t osrs_p,           //Pressure oversampling
       uint8_t osrs_h,           //Humidity oversampling
@@ -69,14 +70,14 @@ class SSCI_BME280 {
       uint8_t filter,           //Filter off
       uint8_t spi3w_en          //3-wire SPI Enable/Disable
     );
-    void readTrim();
-    void readData(double *temp_act, double *press_act, double *hum_act);
+    void readTrim(uint8_t i2c_addr);
+    void readData(uint8_t i2c_addr, double *temp_act, double *press_act, double *hum_act);
 
   private:
     signed long int calibration_T(signed long int adc_T);
     unsigned long int calibration_P(signed long int adc_P);
     unsigned long int calibration_H(signed long int adc_H);
-    void writeReg(uint8_t reg_address, uint8_t data);
+    void writeReg(uint8_t i2c_addr, uint8_t reg_address, uint8_t data);
     signed long int t_fine;
     BME280_calib_data calibData;
 };
