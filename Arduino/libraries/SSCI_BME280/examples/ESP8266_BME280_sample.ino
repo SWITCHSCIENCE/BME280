@@ -5,6 +5,7 @@ extern "C" {
 #include <SSCI_BME280.h>
 
 SSCI_BME280 bme280;
+uint8_t i2c_addr = 0x76;        //I2C Address
 
 void setup()
 {
@@ -18,7 +19,7 @@ void setup()
 
   Serial.begin(115200);
   Wire.begin();
-  bme280.setMode(osrs_t, osrs_p, osrs_h, bme280mode, t_sb, filter, spi3w_en);
+  bme280.setMode(i2c_addr, osrs_t, osrs_p, osrs_h, bme280mode, t_sb, filter, spi3w_en);
 
   bme280.readTrim();
 }
