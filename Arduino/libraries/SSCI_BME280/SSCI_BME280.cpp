@@ -1,9 +1,9 @@
 #include <Wire.h>
 #include "SSCI_BME280.h"
 
-void SSCI_BME280::writeReg(uint8_t i2c_addr, uint8_t reg_address, uint8_t data)
+void SSCI_BME280::writeReg(uint8_t reg_address, uint8_t data)
 {
-  Wire.beginTransmission(i2c_addr);
+  Wire.beginTransmission(_i2c_addr);
   Wire.write(reg_address);
   Wire.write(data);
   Wire.endTransmission();
@@ -17,34 +17,35 @@ void SSCI_BME280::setMode(uint8_t i2c_addr, uint8_t osrs_t, uint8_t osrs_p, uint
   uint8_t ctrl_meas_reg = (osrs_t << 5) | (osrs_p << 2) | bme280mode;
   uint8_t config_reg    = (t_sb << 5) | (filter << 2) | spi3w_en;
   uint8_t ctrl_hum_reg  = osrs_h;
-  writeReg(i2c_addr, BME280_REG_ctrl_hum, ctrl_hum_reg);
-  writeReg(i2c_addr, BME280_REG_ctrl_meas, ctrl_meas_reg);
-  writeReg(i2c_addr, BME280_REG_config, config_reg);
+  _i2c_addr = i2c_addr;
+  writeReg(BME280_REG_ctrl_hum, ctrl_hum_reg);
+  writeReg(BME280_REG_ctrl_meas, ctrl_meas_reg);
+  writeReg(BME280_REG_config, config_reg);
 }
 
-void SSCI_BME280::readTrim(uint8_t i2c_addr)
+void SSCI_BME280::readTrim()
 {
   uint8_t data[33], i = 0;
-  Wire.beginTransmission(i2c_addr);
+  Wire.beginTransmission(_i2c_addr);
   Wire.write(BME280_REG_calib00);
   Wire.endTransmission();
-  Wire.requestFrom(i2c_addr, 24);
+  Wire.requestFrom(_i2c_addr, 24);
   while (Wire.available()) {
     data[i] = Wire.read();
     i++;
   }
 
-  Wire.beginTransmission(i2c_addr);
+  Wire.beginTransmission(_i2c_addr);
   Wire.write(BME280_REG_calib25);
   Wire.endTransmission();
-  Wire.requestFrom(i2c_addr, 1);
+  Wire.requestFrom(_i2c_addr, 1);
   data[i] = Wire.read();
   i++;
 
-  Wire.beginTransmission(i2c_addr);
+  Wire.beginTransmission(_i2c_addr);
   Wire.write(BME280_REG_calib26);
   Wire.endTransmission();
-  Wire.requestFrom(i2c_addr, 8);
+  Wire.requestFrom(_i2c_addr, 8);
   while (Wire.available()) {
     data[i] = Wire.read();
     i++;
@@ -69,16 +70,16 @@ void SSCI_BME280::readTrim(uint8_t i2c_addr)
   calibData.dig_H6 = data[32];
 }
 
-void SSCI_BME280::readData(uint8_t i2c_addr, double *temp_act, double *press_act, double *hum_act)
+void SSCI_BME280::readData(double *temp_act, double *press_act, double *hum_act)
 {
   int i = 0;
   uint32_t data[8];
   unsigned long int hum_raw, temp_raw, press_raw;
 
-  Wire.beginTransmission(i2c_addr);
+  Wire.beginTransmission(_i2c_addr);
   Wire.write(BME280_REG_press_msb);
   Wire.endTransmission();
-  Wire.requestFrom(i2c_addr, 8);
+  Wire.requestFrom(_i2c_addr, 8);
   while (Wire.available()) {
     data[i] = Wire.read();
     i++;
