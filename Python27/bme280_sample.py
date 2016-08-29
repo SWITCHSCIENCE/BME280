@@ -1,12 +1,12 @@
 #coding: utf-8
 
-import smbus
+from smbus2 import SMBus
 import time
 
 bus_number  = 1
 i2c_address = 0x76
 
-bus = smbus.SMBus(bus_number)
+bus = SMBus(bus_number)
 
 digT = []
 digP = []
