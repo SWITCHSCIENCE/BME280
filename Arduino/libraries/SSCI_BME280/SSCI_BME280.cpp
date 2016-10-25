@@ -66,8 +66,8 @@ void SSCI_BME280::readTrim()
   calibData.dig_H2 = (data[26] << 8) | data[25];
   calibData.dig_H3 = data[27];
   calibData.dig_H4 = (data[28] << 4) | (0x0F & data[29]);
-  calibData.dig_H5 = (data[31] << 4) | ((data[30] >> 4) & 0x0F);
-  calibData.dig_H6 = data[32];
+  calibData.dig_H5 = (data[30] << 4) | ((data[29] >> 4) & 0x0F);
+  calibData.dig_H6 = data[31];
 }
 
 void SSCI_BME280::readData(double *temp_act, double *press_act, double *hum_act)
